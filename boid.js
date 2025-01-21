@@ -34,26 +34,50 @@ class Boid {
       }
       }
   
-    // align(boids) {
-    //   let perceptionRadius = 25;
-    //   let steering = createVector();
-    //   let total = 0;
-    //   for (let other of boids) {
-    //     let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-    //     if (other != this && d < perceptionRadius) {
-    //       steering.add(other.velocity);
-    //       total++;
-    //     }
-    //   }
-    //   if (total > 0) {
-    //     steering.div(total);
-    //     steering.setMag(this.maxSpeed);
-    //     steering.sub(this.velocity);
-    //     steering.limit(this.maxForce);
-    //   }
-    //   return steering;
-    // }
+    align(boids) {
+      let perceptionRadius = 25;
+      let steering = createVector();
+      let total = 0;
+      for (let other of boids) {
+        let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+        if (other != this && d < perceptionRadius) {
+          steering.add(other.velocity);
+          total++;
+        }
+      }
+      if (total > 0) {
+        steering.div(total);
+        steering.setMag(this.maxSpeed);
+        steering.sub(this.velocity);
+        steering.limit(this.maxForce);
+      }
+      return steering;
+    }
   
+    // align() {
+    //     let perceptionRadius = 250;
+    //     let avg = createVector(0,0);
+    //     let total = 0;
+    //     for (let other of boids) {
+    //         let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+    //         if (other != this && d < perceptionRadius) {
+    //             let angle = this.velocity.angleBetween(other.vel);
+    //             if (angle < PI / this.vision || angle > -PI / this.vision) {
+    //                 avg.add(other.velocity);
+    //                 total++
+    //             }
+    //         }
+    //     }
+    //     if (total > 0) {
+    //         avg.div(total);
+    //         avg.setMag(this.maxSpeed)
+    //         avg.sub(this.vel);
+    //         avg.limit(this.maxForce); 
+    //     }
+    //     // what happens if total == 0?
+    //     return avg;
+    // }
+
     // separation(boids) {
     //   let perceptionRadius = 24;
     //   let steering = createVector();
@@ -97,19 +121,23 @@ class Boid {
     //   return steering;
     // }
   
-    // flock(boids) {
-    //   let alignment = this.align(boids);
-    //   let cohesion = this.cohesion(boids);
-    //   let separation = this.separation(boids);
+    flock(boids) {
+      let alignment = this.align(boids);
+      let cohesion = this.cohesion(boids);
+      let separation = this.separation(boids);
   
     //   alignment.mult(alignSlider.value());
     //   cohesion.mult(cohesionSlider.value());
     //   separation.mult(separationSlider.value());
+      alignment.mult(0.4);
+      cohesion.mult(1.8);
+      separation.mult(0.9);
   
-    //   this.acceleration.add(alignment);
-    //   this.acceleration.add(cohesion);
-    //   this.acceleration.add(separation);
-    // }
+      this.acceleration.add(alignment);
+      this.acceleration.add(cohesion);
+      this.acceleration.add(separation);
+    }
+
   
     update() {
       this.position.add(this.velocity);
